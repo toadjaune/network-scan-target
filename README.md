@@ -30,4 +30,52 @@ That's what this repo offers.
   - `ulimit -n 200000`
     - This raises the number of files we're allowed to open. The default is typically something like 1024, which is not nearly enough for opening 65535x2 sockets.
     - This is per shell session. If you close your shell and re-open it, you need to run this again
-  - `python
+  - `./listen.py`
+    - You're gonna need to be root to bind to ports <1024, use `sudo` if necessary, or use the `--port-min` argument.
+    - This command never exits, that's normal, it's a server. Exit with Ctrl-C when you're done testing.
+
+- To avoid jumping to wrong conclusions regarding the blackbox firewall, I'd advise to first attempt scanning from the server itself, then from a host where you know that it's supposed to work.
+  - This can help put in light configuration errors somewhere else in the setup (say, the server is an AWS VM, and you messed up your security group setup...)
+
+## Client setup
+
+- Install `nmap`, `telnet`, `netcat` using your operating system's package manager :
+  - debian/ubuntu-based : `sudo apt install nmap telnet netcat`
+  - redhat/fedora-based : `sudo dnf install nmap telnet netcat`
+  - other linux distribution : You probably know how
+  - MacOS : Set up brew, then `brew install nmap telnet netcat`
+  - Windows : That's probably doable with git-bash or wsl2. Feel free to submit a PR if you use such an environment ; I don't.
+
+## Running a test from the client
+
+Think of this section of basic examples with the tools installed above.
+It's by no means an exhaustive listing of what can be done with those tools.
+Use a search engine and read manpages :)
+
+### Test a specific port
+
+- TCP : `telnet <target_host> <target_port>`
+- TCP : `nc    <target_host> <target_port>`
+- UDP : `nc -u <target_host> <target_port>` (then press enter)
+- TCP : `nmap     -p <target_port> <target_host>`
+- UDP : `nmap -sU -p <target_port> <target_host>`
+
+### Port range
+
+- TCP : `nmap     -p 1-65535 <target_host> -dd | grep -E "^[[:digit:]]+/" | grep -v " open "`
+- UDP : `nmap -sU -p 1-65535 <target_host> -dd | grep -E "^[[:digit:]]+/" | grep -v " open "`
+
+# Cool, but I wish it did $SOME_FEATURE, is this possible ?
+
+This is a quick'n dirty script that I wrote the one time I needed.
+Feel free to use it, but I'm not planning to have it become a proper clean software.
+
+PRs are welcome though :)
+
+# Related projects and inspirations
+
+http://portquiz.net/ is pretty cool, and probably sufficient if :
+
+- The firewall that you're testing is between you and "the Internet"
+- You only need TCP testing
+- You only need to test a few ports manually, not the entire range

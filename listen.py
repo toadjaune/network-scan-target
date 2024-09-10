@@ -28,7 +28,7 @@ class UDPServerProtocol:
 
     def datagram_received(self, data, addr):
         """Gets called whenever a new datagram is received on the socket"""
-        message = f"Received probe from {addr}, contents : {data.decode()}"
+        message = f"Received probe from {addr}"
         data = str.encode(message)
         logger.info(message)
         self.transport.sendto(data, addr)
