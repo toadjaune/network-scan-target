@@ -1,5 +1,10 @@
 import argparse
 import asyncio
+import logging
+import errno
+
+
+logger = logging.getLogger()
 
 
 class EchoServerProtocol(asyncio.Protocol):
@@ -19,18 +24,24 @@ async def main():
 
     args = parse_args()
 
-    # Get a reference to the event loop as we plan to use
-    # low-level APIs.
+    # Get a reference to the event loop as we plan to use low-level APIs.
     loop = asyncio.get_running_loop()
 
     coroutines = []
 
     for port in range(args.port_min, args.port_max):
-        server = await loop.create_server(
-            lambda: EchoServerProtocol(),
-            '', # listen on all available interfaces
-            port)
-        coroutines.append(server.serve_forever())
+        try:
+            server = await loop.create_server(
+                lambda: EchoServerProtocol(),
+                '', # listen on all available interfaces
+                port)
+            coroutines.append(server.serve_forever())
+        except OSError as e:
+            if e.errno == errno.EADDRINUSE:
+                logger.warn(f"Could not listen on port {port}, already in use")
+            else:
+                raise e
+
 
     async with server:
         await asyncio.gather(*coroutines)
