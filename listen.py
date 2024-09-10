@@ -13,7 +13,7 @@ class TCPServerProtocol(asyncio.Protocol):
     def connection_made(self, transport):
         """Gets called whenever a client connects (TCP handshake)"""
         peername = transport.get_extra_info("peername")
-        logging.info("Connection from {}".format(peername))
+        logging.info("TCP connection from {}".format(peername))
         transport.write(b"Connection attempt OK\n")
         transport.close()
 
@@ -25,7 +25,7 @@ class UDPServerProtocol:
 
     def datagram_received(self, data, addr):
         """Gets called whenever a new datagram is received on the socket"""
-        message = f"Received probe from {addr}"
+        message = f"UDP connection from {addr}"
         data = str.encode(message)
         logging.info(message)
         self.transport.sendto(data, addr)
