@@ -34,7 +34,7 @@ class UDPServerProtocol:
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Listen on many ports, to act as a scan target for black-box firewall testing"
+        description="Listen on many ports on TCP and UDP, to act as a scan target for black-box firewall testing"
     )
     parser.add_argument(
         "--port-min",
@@ -63,7 +63,7 @@ async def open_tcp_socket_on_port(port: int):
         await server.serve_forever()
     except OSError as e:
         if e.errno == errno.EADDRINUSE:
-            logger.warning(f"Could not listen on port {port}, already in use")
+            logger.warning(f"Could not listen on TCP port {port}, already in use")
         else:
             raise e
 
@@ -79,7 +79,7 @@ async def open_udp_socket_on_port(port: int):
         await asyncio.sleep(3600)
     except OSError as e:
         if e.errno == errno.EADDRINUSE:
-            logger.warning(f"Could not listen on port {port}, already in use")
+            logger.warning(f"Could not listen on UDP port {port}, already in use")
         else:
             raise e
 
@@ -89,7 +89,7 @@ async def main():
 
     coroutines = []
 
-    for port in range(args.port_min, args.port_max):
+    for port in range(args.port_min, args.port_max + 1):
         coroutines.append(open_tcp_socket_on_port(port))
         coroutines.append(open_udp_socket_on_port(port))
 
