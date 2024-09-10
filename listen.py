@@ -26,9 +26,9 @@ class UDPServerProtocol:
 
     def datagram_received(self, data, addr):
         """Gets called whenever a new datagram is received on the socket"""
-        message = data.decode()
-        print("Received %r from %s" % (message, addr))
-        print("Send %r to %s" % (message, addr))
+        message = f"Received probe from {addr}, contents : {data.decode()}"
+        data = str.encode(message)
+        logger.info(message)
         self.transport.sendto(data, addr)
 
 
@@ -57,7 +57,7 @@ async def open_tcp_socket_on_port(port: int):
     try:
         server = await loop.create_server(
             lambda: TCPServerProtocol(),
-            "",  # listen on all available interfaces
+            "::",  # listen on all available interfaces, with both IPv4 and IPv6
             port,
         )
         await server.serve_forever()
@@ -73,9 +73,8 @@ async def open_udp_socket_on_port(port: int):
     loop = asyncio.get_running_loop()
     try:
         transport, protocol = await loop.create_datagram_endpoint(
-            # TODO : address family
             lambda: UDPServerProtocol(),
-            local_addr=("127.0.0.1", port),
+            local_addr=("::", port),
         )
         await asyncio.sleep(3600)
     except OSError as e:
