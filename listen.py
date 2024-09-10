@@ -9,13 +9,15 @@ class EchoServerProtocol(asyncio.Protocol):
         transport.write(b"Connection attempt OK\n")
         transport.close()
 
-
-async def main():
-
+def parse_args():
     parser = argparse.ArgumentParser(description='Listen on many ports, to act as a scan target for black-box firewall testing')
     parser.add_argument('--port-min', type=int, default=1,     help='Lower bound of the port range to listen on')
     parser.add_argument('--port-max', type=int, default=65535, help='Upper bound of the port range to listen on')
-    args = parser.parse_args()
+    return parser.parse_args()
+
+async def main():
+
+    args = parse_args()
 
     # Get a reference to the event loop as we plan to use
     # low-level APIs.
