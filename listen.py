@@ -94,7 +94,7 @@ async def open_udp_socket_on_port(port: int):
             local_addr=("::", port),
         )
         logging.debug(f"Opened UDP port {port}")
-        await asyncio.sleep(3600)
+        await asyncio.sleep(10000000)
     except OSError as e:
         if e.errno == errno.EADDRINUSE:
             logging.warning(f"Could not listen on UDP port {port}, already in use")
