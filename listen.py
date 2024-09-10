@@ -73,7 +73,7 @@ async def open_tcp_socket_on_port(port: int):
     try:
         server = await loop.create_server(
             lambda: TCPServerProtocol(),
-            "::",  # listen on all available interfaces, with both IPv4 and IPv6
+            "",  # listen on all available interfaces, with both IPv4 and IPv6
             port,
         )
         logging.debug(f"Opened TCP port {port}")
