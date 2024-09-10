@@ -21,13 +21,17 @@ async def main():
     # low-level APIs.
     loop = asyncio.get_running_loop()
 
-    server = await loop.create_server(
-        lambda: EchoServerProtocol(),
-        '', # listen on all available interfaces
-        8888)
+    coroutines = []
+
+    for port in range(args.port_min, args.port_max):
+        server = await loop.create_server(
+            lambda: EchoServerProtocol(),
+            '', # listen on all available interfaces
+            port)
+        coroutines.append(server.serve_forever())
 
     async with server:
-        await server.serve_forever()
+        await asyncio.gather(*coroutines)
 
 
 asyncio.run(main())
