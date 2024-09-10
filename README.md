@@ -21,10 +21,12 @@ That's what this repo offers.
 - If you can, create a dedicated VM for this, rather than using a machine with a real use.
 
   - We're going to open sockets on EVERY port, TCP and UDP. Meaning that once we're running, nothing else can claim any port, and some programs might behave poorly in such a situation. You've been warned.
-  - That being said, the risk should be fairly low, and no persistent configuration change is made by this script
+  - Also, zero effort was made at performance optimization. You should probably take a beefy VM if you want it to hold.
+  - That being said, no persistent configuration change is made by this script
 
-- Download the script on your machine
-  - TODO : add command examples once we have the github repo URL
+- Download the script on your machine, with for example :
+  - git clone https://github.com/toadjaune/network-scan-target.git
+  - curl -O https://raw.githubusercontent.com/toadjaune/network-scan-target/main/listen.py
 - Open a shell on the server, and run :
 
   - `ulimit -n 200000`
@@ -40,10 +42,10 @@ That's what this repo offers.
 ## Client setup
 
 - Install `nmap`, `telnet`, `netcat` using your operating system's package manager :
-  - debian/ubuntu-based : `sudo apt install nmap telnet netcat`
-  - redhat/fedora-based : `sudo dnf install nmap telnet netcat`
+  - debian/ubuntu-based : `sudo apt install nmap telnet`
+  - redhat/fedora-based : `sudo dnf install nmap telnet`
   - other linux distribution : You probably know how
-  - MacOS : Set up brew, then `brew install nmap telnet netcat`
+  - MacOS : Set up [homebrew](https://brew.sh/), then `brew install nmap telnet`
   - Windows : That's probably doable with git-bash or wsl2. Feel free to submit a PR if you use such an environment ; I don't.
 
 ## Running a test from the client
@@ -67,7 +69,7 @@ Use a search engine and read manpages :)
 
 # Cool, but I wish it did $SOME_FEATURE, is this possible ?
 
-This is a quick'n dirty script that I wrote the one time I needed.
+This is a quick'n dirty script that I wrote the one time I needed it.
 Feel free to use it, but I'm not planning to have it become a proper clean software.
 
 PRs are welcome though :)
