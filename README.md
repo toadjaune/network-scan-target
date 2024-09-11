@@ -30,9 +30,6 @@ That's what this repo offers.
   - curl -O https://raw.githubusercontent.com/toadjaune/network-scan-target/main/listen.py
 - Open a shell on the server, and run :
 
-  - `ulimit -n 200000`
-    - This raises the number of files we're allowed to open. The default is typically something like 1024, which is not nearly enough for opening 65535x2 sockets.
-    - This is per shell session. If you close your shell and re-open it, you need to run this again
   - `./listen.py`
     - You're gonna need to be root to bind to ports <1024, use `sudo` if necessary, or use the `--port-min` argument.
     - This command never exits, that's normal, it's a server. Exit with Ctrl-C when you're done testing.

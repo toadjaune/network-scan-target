@@ -2,8 +2,9 @@
 
 import argparse
 import asyncio
-import logging
 import errno
+import logging
+import resource
 
 
 # This code is heavily inspired by the examples at https://docs.python.org/3/library/asyncio-protocol.html
@@ -29,6 +30,15 @@ class UDPServerProtocol:
         data = str.encode(message)
         logging.info(message)
         self.transport.sendto(data, addr)
+
+
+def increase_allowed_sockets_number():
+    """
+    This is equivalent to running `ulimit -n <number>`
+
+    We need at least 65535x2, we round up to 200000 to have some margin
+    """
+    resource.setrlimit(resource.RLIMIT_NOFILE, (200000, 300000))
 
 
 def parse_args():
@@ -111,6 +121,7 @@ async def open_all_sockets(port_min: int, port_max: int):
 
 async def main():
     cli_args = parse_args()
+    increase_allowed_sockets_number()
     await open_all_sockets(cli_args.port_min, cli_args.port_max)
     await asyncio.sleep(10000000)
 
