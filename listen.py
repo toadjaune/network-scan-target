@@ -35,7 +35,6 @@ def parse_args():
     loglevels = {
         "critical": logging.CRITICAL,
         "error": logging.ERROR,
-        "warn": logging.WARNING,
         "warning": logging.WARNING,
         "info": logging.INFO,
         "debug": logging.DEBUG,
@@ -71,13 +70,12 @@ async def open_tcp_socket_on_port(port: int):
     # Get a reference to the event loop as we plan to use low-level APIs.
     loop = asyncio.get_running_loop()
     try:
-        server = await loop.create_server(
+        await loop.create_server(
             lambda: TCPServerProtocol(),
             "",  # listen on all available interfaces, with both IPv4 and IPv6
             port,
         )
         logging.debug(f"Opened TCP port {port}")
-        await server.serve_forever()
     except OSError as e:
         if e.errno == errno.EADDRINUSE:
             logging.warning(f"Could not listen on TCP port {port}, already in use")
@@ -94,7 +92,6 @@ async def open_udp_socket_on_port(port: int):
             local_addr=("::", port),
         )
         logging.debug(f"Opened UDP port {port}")
-        await asyncio.sleep(10000000)
     except OSError as e:
         if e.errno == errno.EADDRINUSE:
             logging.warning(f"Could not listen on UDP port {port}, already in use")
@@ -102,16 +99,20 @@ async def open_udp_socket_on_port(port: int):
             raise e
 
 
-async def main():
-    cli_args = parse_args()
-
+async def open_all_sockets(port_min: int, port_max: int):
     coroutines = []
-
-    for port in range(cli_args.port_min, cli_args.port_max + 1):
+    for port in range(port_min, port_max + 1):
         coroutines.append(open_tcp_socket_on_port(port))
         coroutines.append(open_udp_socket_on_port(port))
 
     await asyncio.gather(*coroutines)
+    logging.warning("READY : all sockets opened")
+
+
+async def main():
+    cli_args = parse_args()
+    await open_all_sockets(cli_args.port_min, cli_args.port_max)
+    await asyncio.sleep(10000000)
 
 
 asyncio.run(main())
