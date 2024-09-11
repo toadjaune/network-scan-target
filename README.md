@@ -18,6 +18,7 @@ That's what this repo offers.
 ## Server setup
 
 - No specific server-side setup is required, only python3 with the stdlib.
+  - Last tested on Fedora 40 / Ubuntu 24.04, with python 3.12
 - If you can, create a dedicated VM for this, rather than using a machine with a real use.
 
   - We're going to open sockets on EVERY port, TCP and UDP. Meaning that once we're running, nothing else can claim any port, and some programs might behave poorly in such a situation. You've been warned.
